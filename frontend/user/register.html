@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Регистрация</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h2>Регистрация</h2>
+      <form id="registerForm">
+        <input type="email" id="email" placeholder="Email" required />
+        <input type="password" id="password" placeholder="Пароль" required />
+        <input type="text" id="name" placeholder="Имя" required />
+        <button type="submit">Зарегистрироваться</button>
+      </form>
+      <p><a href="login.html">Войти</a></p>
+    </div>
+
+    <script>
+      document
+        .getElementById("registerForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const email = document.getElementById("email").value;
+          const password = document.getElementById("password").value;
+          const name = document.getElementById("name").value;
+
+          const response = await fetch("http://localhost:3000/auth/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password, name }),
+          });
+
+          if (response.ok) {
+            alert("Регистрация успешна!");
+            window.location.href = "login.html";
+          } else {
+            const data = await response.json();
+            alert(data.message || "Ошибка регистрации");
+          }
+        });
+    </script>
+  </body>
+</html>

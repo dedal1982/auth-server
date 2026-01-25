@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Вход для админа</title>
+    <link rel="stylesheet" href="../user/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h2>Вход для админа</h2>
+      <form id="adminLoginForm">
+        <input type="email" id="email" placeholder="Email админа" required />
+        <input
+          type="password"
+          id="password"
+          placeholder="Пароль админа"
+          required
+        />
+        <button type="submit">Войти</button>
+      </form>
+    </div>
+
+    <script>
+      document
+        .getElementById("adminLoginForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const email = document.getElementById("email").value;
+          const password = document.getElementById("password").value;
+
+          const response = await fetch("http://localhost:3000/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ email, password }),
+          });
+
+          if (response.ok) {
+            // Проверяем, что пользователь — админ
+            const userResponse = await fetch("http://localhost:3000/api/user", {
+              credentials: "include",
+            });
+
+            if (userResponse.ok) {
+              const user = await userResponse.json();
+              if (user.role === "admin") {
+                window.location.href = "index.html";
+              } else {
+                alert("Доступ только для админа");
+              }
+            } else {
+              alert("Ошибка получения данных пользователя");
+            }
+          } else {
+            const data = await response.json();
+            alert(data.message || "Ошибка входа");
+          }
+        });
+    </script>
+  </body>
+</html>

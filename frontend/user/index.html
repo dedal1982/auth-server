@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Главная</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h2 id="greeting">Привет, <span id="userName"></span>!</h2>
+      <a href="/auth/logout" id="logoutLink">Выход</a>
+    </div>
+
+    <script>
+      async function loadUserData() {
+        const response = await fetch("http://localhost:3000/api/user", {
+          credentials: "include",
+        });
+        if (response.ok) {
+          const user = await response.json();
+          document.getElementById("userName").textContent = user.name;
+        } else {
+          window.location.href = "login.html";
+        }
+      }
+
+      loadUserData();
+
+      document.getElementById("logoutLink").addEventListener("click", (e) => {
+        e.preventDefault();
+        fetch("http://localhost:3000/auth/logout", {
+          method: "GET",
+          credentials: "include",
+        }).then(() => {
+          window.location.href = "login.html";
+        });
+      });
+    </script>
+  </body>
+</html>
