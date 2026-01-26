@@ -25,6 +25,14 @@ router.put("/stories/:storyId", authMiddleware, (req, res, next) => {
   story.putStory(req, res, next);
 });
 
+// Обновить историю частично (только для админов)
+router.patch("/stories/:storyId", authMiddleware, (req, res, next) => {
+  if (!req.user.isAdmin) {
+    return next(new ForbiddenError("Доступ запрещен"));
+  }
+  story.patchStory(req, res, next);
+});
+
 // Поставить лайк (авторизованный пользователь)
 router.put("/stories/:storyId/like", authMiddleware, story.putLikeStory);
 

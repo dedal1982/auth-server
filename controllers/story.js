@@ -139,6 +139,33 @@ const deleteLikeStory = (req, res, next) => {
     });
 };
 
+// Обновить историю частично (только для админов)
+const patchStory = (req, res, next) => {
+  if (!req.user.isAdmin) {
+    return next(new ForbiddenError("Доступ запрещен"));
+  }
+  storyModel
+    .findByIdAndUpdate(req.params.storyId, req.body, {
+      new: true,
+      runValidators: true,
+    })
+    .then((story) => {
+      if (!story) {
+        throw new NotFoundError("История не найдена");
+      }
+      res.status(200).send(story);
+    })
+    .catch((err) => {
+      if (err instanceof mongoose.Error.CastError) {
+        next(new BadRequestError("Некорректный id"));
+      } else if (err.name === "ValidationError") {
+        next(new BadRequestError(err.message));
+      } else {
+        next(err);
+      }
+    });
+};
+
 module.exports = {
   getStories,
   createStory,
@@ -146,4 +173,5 @@ module.exports = {
   putStory,
   putLikeStory,
   deleteLikeStory,
+  patchStory,
 };
