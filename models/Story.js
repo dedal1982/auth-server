@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { formatDateToMoscow } = require("../utils/dateFormat");
 
 // Коллекция для хранения счетчика
 const counterSchema = new mongoose.Schema({
@@ -74,6 +75,19 @@ const storySchema = new mongoose.Schema(
   },
   { timestamps: true },
 );
+
+/// Виртуальные свойства для форматирования дат с использованием утилиты
+storySchema.virtual("createdAtFormatted").get(function () {
+  return formatDateToMoscow(this.createdAt);
+});
+
+storySchema.virtual("updatedAtFormatted").get(function () {
+  return formatDateToMoscow(this.updatedAt);
+});
+
+// Включить виртуальные свойства при сериализации
+storySchema.set("toJSON", { virtuals: true });
+storySchema.set("toObject", { virtuals: true });
 
 // Перед сохранением документа назначаем уникальный id
 storySchema.pre("save", async function (next) {
