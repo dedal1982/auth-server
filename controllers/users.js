@@ -98,7 +98,16 @@ const login = (req, res, next) => {
           expiresIn: "7d",
         },
       );
-      res.status(200).send({ token });
+
+      // Установка cookie
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: NODE_ENV === "production", // только по HTTPS в продакшене
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 дней
+        sameSite: "strict",
+      });
+
+      res.status(200).send({ message: "Успешный вход" });
     })
     .catch((err) => next(err));
 };
