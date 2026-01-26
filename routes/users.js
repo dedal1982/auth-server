@@ -14,6 +14,7 @@ const {
   validateCreateUser,
   validateUpdateUser,
 } = require("../middlewares/requestValidation");
+const checkAdmin = require("../middlewares/checkAdmin");
 
 // Регистрация — открытая
 router.post("/signup", validateCreateUser, createUser);
@@ -22,7 +23,7 @@ router.post("/signup", validateCreateUser, createUser);
 router.post("/signin", validateLogin, login);
 
 // Получить всех пользователей — только авторизация
-router.get("/users", auth, getUsers);
+router.get("/users", checkAdmin, getUsers);
 
 // Получить текущего пользователя
 router.get("/users/me", auth, getCurrentUser);

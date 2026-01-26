@@ -130,6 +130,35 @@ const getCurrentUser = (req, res, next) => {
     });
 };
 
+// Вход для админа
+const adminLogin = (req, res, next) => {
+  const { email, password } = req.body;
+  userModel
+    .findUserByCredentials(email, password)
+    .then((user) => {
+      const payload = { _id: user._id, isAdmin: user.role === "admin" };
+      const token = jwt.sign(
+        payload,
+        NODE_ENV === "production" ? SECRET_KEY : "most-secret-key",
+        {
+          expiresIn: "7d",
+        },
+      );
+
+      // Установка cookie
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: NODE_ENV === "production",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        sameSite: "strict",
+      });
+
+      // Возвращаем URL админки для редиректа
+      res.status(200).send({ message: "Успешный вход", redirectUrl: "/admin" });
+    })
+    .catch((err) => next(err));
+};
+
 module.exports = {
   getUsers,
   getUserById,
@@ -137,4 +166,5 @@ module.exports = {
   updateUserById,
   login,
   getCurrentUser,
+  adminLogin,
 };

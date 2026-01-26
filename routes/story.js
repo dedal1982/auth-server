@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const story = require("../controllers/story");
 const authMiddleware = require("../middlewares/auth");
-const checkAdmin = require("../middlewares/checkAdmin"); // импортируем middleware проверки админа
+const checkAdmin = require("../middlewares/checkAdmin");
 
 // Получить все истории (открытый доступ)
 router.get("/stories", story.getStories);
