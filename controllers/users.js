@@ -38,10 +38,10 @@ const getUserById = (req, res, next) => {
 };
 
 const createUser = (req, res, next) => {
-  const { name, about, avatar, email, password } = req.body;
+  const { name, email, password } = req.body;
 
   userModel
-    .create({ name, about, avatar, email, password })
+    .create({ name, email, password })
     .then((user) => {
       res.status(201).send({ data: userData(user) });
     })
@@ -61,11 +61,11 @@ const createUser = (req, res, next) => {
 };
 
 const updateUserById = (req, res, next) => {
-  const { name, about } = req.body;
+  const { name } = req.body;
   userModel
     .findByIdAndUpdate(
       req.user._id,
-      { name, about },
+      { name },
       { new: true, runValidators: true },
     )
     .orFail()
