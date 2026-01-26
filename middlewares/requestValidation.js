@@ -63,6 +63,14 @@ const validateUserIdParam = celebrate({
   }),
 });
 
+// Валидация для входа Админа
+const validateAdminLogin = celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().email().required(),
+    password: Joi.string().min(8).required(),
+  }),
+});
+
 module.exports = {
   validateCreateUser,
   validateLogin,
@@ -71,4 +79,5 @@ module.exports = {
   validateUpdateStory,
   validateStoryIdParam,
   validateUserIdParam,
+  validateAdminLogin,
 };
