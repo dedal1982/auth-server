@@ -33,7 +33,9 @@ const validateCreateStory = celebrate({
       .valid("Пристории", "Ужасы", "Фантастика", "Фэнтези")
       .required(),
     ageRating: Joi.string().valid("6+", "12+", "16+", "18+").required(),
-    coverResId: Joi.number().integer().required(),
+    coverResId: Joi.alternatives()
+      .try(Joi.number().integer(), Joi.string())
+      .required(),
     rawContent: Joi.string().min(1).required(),
   }),
 });
@@ -44,7 +46,9 @@ const validateUpdateStory = celebrate({
     title: Joi.string().min(1),
     genre: Joi.string().valid("Пристории", "Ужасы", "Фантастика", "Фэнтези"),
     ageRating: Joi.string().valid("6+", "12+", "16+", "18+"),
-    coverResId: Joi.number().integer(),
+    coverResId: Joi.alternatives()
+      .try(Joi.number().integer(), Joi.string())
+      .required(),
     rawContent: Joi.string().min(1),
   }),
 });

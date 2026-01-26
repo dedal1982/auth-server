@@ -35,26 +35,62 @@ const createStory = (req, res, next) => {
 };
 
 // Удалить историю (только для администратора)
-const deleteStory = (req, res, next) => {
+const deleteStory = async (req, res, next) => {
   if (!req.user.isAdmin) {
     return next(new ForbiddenError("Доступ запрещен"));
   }
-  storyModel
-    .findByIdAndDelete(req.params.storyId)
-    .then((story) => {
-      if (!story) {
-        throw new NotFoundError("История не найдена");
+  const storyId = parseInt(req.params.storyId, 10); // получаем числовой id
+  if (isNaN(storyId)) {
+    return next(new BadRequestError("Некорректный id"));
+  }
+  try {
+    // Удаляем выбранную историю
+    const story = await storyModel.findOneAndDelete({ id: storyId });
+    if (!story) {
+      return next(new NotFoundError("История не найдена"));
+    }
+    // Получаем все оставшиеся истории, сортируя по id
+    const remainingStories = await storyModel.find().sort({ id: 1 });
+    // Перебираем оставшиеся истории и обновляем их id по порядку
+    for (let index = 0; index < remainingStories.length; index++) {
+      const s = remainingStories[index];
+      // Если id не совпадает с индексом + 1, обновляем
+      const correctId = index + 1;
+      if (s.id !== correctId) {
+        s.id = correctId;
+        await s.save();
       }
-      res.status(200).send({ message: "История удалена" });
-    })
-    .catch((err) => {
-      if (err instanceof mongoose.Error.CastError) {
-        next(new BadRequestError("Некорректный id"));
-      } else {
-        next(err);
-      }
-    });
+    }
+
+    res.status(200).send({ message: "История удалена и номера переписаны" });
+  } catch (err) {
+    if (err instanceof mongoose.Error.CastError || isNaN(storyId)) {
+      next(new BadRequestError("Некорректный id"));
+    } else {
+      next(err);
+    }
+  }
 };
+// const deleteStory = (req, res, next) => {
+//   if (!req.user.isAdmin) {
+//     return next(new ForbiddenError("Доступ запрещен"));
+//   }
+//   storyModel
+//     .findByIdAndDelete(req.params.storyId)
+//     .then((story) => {
+//       if (!story) {
+//         throw new NotFoundError("История не найдена");
+//       }
+//       res.status(200).send({ message: "История удалена" });
+//     })
+//     .catch((err) => {
+//       if (err instanceof mongoose.Error.CastError) {
+//         next(new BadRequestError("Некорректный id"));
+//       } else {
+//         next(err);
+//       }
+//     });
+// };
 
 // Обновить историю (только для администратора)
 const putStory = (req, res, next) => {

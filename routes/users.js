@@ -1,37 +1,29 @@
-const express = require("express");
 const router = express.Router();
 
 const {
   getUsers,
   getUserById,
-  createUser,
   updateUserById,
   getCurrentUser,
 } = require("../controllers/users");
 
-const auth = require("../middlewares/auth");
+const authMiddleware = require("../middlewares/auth");
 const {
-  validateCreateUser,
   validateUpdateUser,
+  validateGetUserById,
 } = require("../middlewares/requestValidation");
 const checkAdmin = require("../middlewares/checkAdmin");
-
-// Регистрация — открытая
-router.post("/signup", validateCreateUser, createUser);
-
-// Вход — тоже открытый
-router.post("/signin", validateLogin, login);
 
 // Получить всех пользователей — только авторизация
 router.get("/users", checkAdmin, getUsers);
 
 // Получить текущего пользователя
-router.get("/users/me", auth, getCurrentUser);
+router.get("/users/me", authMiddleware, getCurrentUser);
 
 // Получить пользователя по ID
-router.get("/users/:id", auth, getUserById);
+router.get("/users/:id", authMiddleware, getUserById);
 
 // Обновить профиль текущего пользователя
-router.patch("/users/me", auth, validateUpdateUser, updateUserById);
+router.patch("/users/me", authMiddleware, validateUpdateUser, updateUserById);
 
 module.exports = router;
