@@ -40,6 +40,11 @@ router.patch(
   },
 );
 
+// Получить данные админки (только для админов)
+router.get("/admin/dashboard", authMiddleware, checkAdmin, (req, res, next) => {
+  story.getAdminDashboard(req, res, next);
+});
+
 // Поставить лайк (авторизованный пользователь)
 router.put("/stories/:storyId/like", authMiddleware, story.putLikeStory);
 

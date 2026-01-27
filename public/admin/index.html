@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Админка</title>
+    <link rel="stylesheet" href="/admin/style.css" />
+  </head>
+  <body>
+    <div class="admin-container">
+      <header class="admin-header">
+        <h1>Панель администратора</h1>
+        <button id="logoutBtn">Выход</button>
+      </header>
+
+      <main class="admin-main">
+        <div class="stats">
+          <div class="stat-card">
+            <h3>Всего историй</h3>
+            <p id="totalStories">0</p>
+          </div>
+          <div class="stat-card">
+            <h3>Всего лайков</h3>
+            <p id="totalLikes">0</p>
+          </div>
+        </div>
+
+        <section class="stories-list">
+          <h2>Список историй</h2>
+          <div id="storiesContainer"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="/admin/script.js"></script>
+  </body>
+</html>

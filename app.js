@@ -5,6 +5,7 @@ const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
 const { errors } = require("celebrate");
 const cors = require("cors");
+const path = require("path");
 const router = require("./routes/index");
 const handleError = require("./middlewares/handleError");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
@@ -32,6 +33,8 @@ app.use(helmet());
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors());
+
+app.use(express.static(path.join(__dirname, "public")));
 app.use(requestLogger);
 
 // Тест для падения сервера

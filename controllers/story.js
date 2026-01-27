@@ -15,6 +15,32 @@ const getStories = (req, res, next) => {
     .catch(next);
 };
 
+// Получить данные для админки (все истории + статистика)
+const getAdminDashboard = async (req, res, next) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = 10;
+
+  try {
+    const stories = await storyModel
+      .find({})
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .skip((page - 1) * limit);
+
+    const total = await storyModel.countDocuments();
+
+    res.status(200).json({
+      totalStories: total,
+      totalLikes: stories.reduce((sum, s) => sum + s.likes.length, 0),
+      stories,
+      page,
+      hasMore: page * limit < total,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 // Создать новую историю (только для администратора)
 const createStory = (req, res, next) => {
   if (!req.user.isAdmin) {
@@ -210,4 +236,5 @@ module.exports = {
   putLikeStory,
   deleteLikeStory,
   patchStory,
+  getAdminDashboard,
 };
