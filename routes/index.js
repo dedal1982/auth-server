@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const signupRouter = require("./signup");
-const signinRouter = require("./login");
+const loginRouter = require("./login");
 const storyRouter = require("./story");
 const adminRouter = require("./admin");
 
@@ -11,14 +11,14 @@ const { notFound } = require("../controllers/notFound");
 
 // Регистрация и вход — без авторизации
 router.use(signupRouter);
-router.use(signinRouter);
+router.use(loginRouter);
 
 // Защищённые маршруты
 router.use(authMiddleware);
 router.use("/", storyRouter);
 
 //Администратор
-router.use("/admin", adminRouter);
+router.use("/admin", authMiddleware, adminRouter);
 
 // Обработка несуществующих маршрутов
 router.all("/*", notFound);
