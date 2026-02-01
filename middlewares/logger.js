@@ -1,7 +1,7 @@
 const winston = require("winston");
 const expressWinston = require("express-winston");
 
-const maxLogSize = 10 * 1024 * 1024; // например, 10MB
+const maxLogSize = 10 * 1024 * 1024;
 
 const requestLogger = expressWinston.logger({
   transports: [
